@@ -1,0 +1,52 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "johndoe",
+      "email": "john@example.com",
+      "password": "password123",
+      "firstName": "John",
+      "lastName": "Doe",
+      "ecoCredits": 247,
+      "lockedCredits": 156,
+      "codingHours": 42.5,
+      "activitiesCount": 12,
+      "rank": 12,
+      "badge": "Nature Newbie",
+      "joinedDate": "2024-01-01",
+      "avatar": "JD"
+    },
+    {
+      "id": "2", 
+      "username": "naturecoder",
+      "email": "nature@example.com",
+      "password": "eco123",
+      "firstName": "Sarah",
+      "lastName": "Green",
+      "ecoCredits": 1247,
+      "lockedCredits": 89,
+      "codingHours": 156.5,
+      "activitiesCount": 45,
+      "rank": 1,
+      "badge": "Eco Champion",
+      "joinedDate": "2023-08-15",
+      "avatar": "SG"
+    },
+    {
+      "id": "3",
+      "username": "greendev",
+      "email": "green@example.com", 
+      "password": "forest456",
+      "firstName": "Mike",
+      "lastName": "Forest",
+      "ecoCredits": 1156,
+      "lockedCredits": 72,
+      "codingHours": 142.0,
+      "activitiesCount": 42,
+      "rank": 2,
+      "badge": "Forest Guardian",
+      "joinedDate": "2023-09-10",
+      "avatar": "MF"
+    }
+  ]
+}

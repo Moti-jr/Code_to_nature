@@ -14,7 +14,7 @@ class CustomUser(AbstractUser):
 class Profile(models.Model):
     """User Profile"""
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    profile_pic = models.ImageField(upload_to="profiles/", blank=True)
+    profile_pic = models.ImageField(upload_to="profiles/", blank=True, null=True)
     github_username = models.CharField(max_length=39)
     github_token = models.UUIDField(blank=True, null=True)
     eco_credits = models.IntegerField(default=0)
@@ -28,3 +28,8 @@ class Profile(models.Model):
         """Validates Streaks"""
         if (self.current_streak >= self.longest_streak):
             self.longest_streak = self.current_streak
+            
+    def credit_validation(self):
+        if self.eco_credits < 0 or self.locked_credits < 0:
+            return {"Credits must be positive integer"}
+
