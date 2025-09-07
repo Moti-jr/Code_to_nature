@@ -1,6 +1,7 @@
 from .models import CustomUser, Profile
 from rest_framework import serializers
 
+
 class CustomerUserSerializer(serializers.ModelSerializer):
     """Customer User serializer"""
     class Meta:
@@ -8,9 +9,9 @@ class CustomerUserSerializer(serializers.ModelSerializer):
         fields = ['email', 'password', 'username']
         extra_kwargs = {
             "password": {"write_only": True},
-            "username": {"required": False}, 
+            "username": {"required": False},
         }
-        
+
     def create(self, validated_data):
         """Create User"""
         user = CustomUser(
@@ -48,4 +49,3 @@ class ProfileSerializer(serializers.ModelSerializer):
         if friends is not None:
             instance.friends.set(friends)
         return instance
-    
