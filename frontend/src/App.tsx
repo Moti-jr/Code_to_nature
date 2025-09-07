@@ -15,6 +15,7 @@ import Leaderboard from "./pages/Leaderboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
+import ProfilePage from "./pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
                         <Route path="/activities" element={<OutdoorActivities />} />
                         <Route path="/rewards" element={<RewardsStore />} />
                         <Route path="/leaderboard" element={<Leaderboard />} />
+                        <Route path="/profile" element={<ProfilePage />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </main>

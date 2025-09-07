@@ -8,14 +8,18 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
-  ecoCredits: number;
-  lockedCredits: number;
+  eco_credits: number;
+  locked_credits: number;
   codingHours: number;
   activitiesCount: number;
   rank: number;
   badge: string;
   joinedDate: string;
-  avatar: string;
+  profile_pic: string | null;
+  github_username: string;
+  github_token: string;
+  current_streak: number;
+  longest_streak: number;
 }
 
 interface AuthContextType {
@@ -96,18 +100,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return false;
     }
     
-    // Create new user
+    // Create new user with structure matching mock data
     const newUser: User = {
       id: Date.now().toString(),
-      ...userData,
-      ecoCredits: 0,
-      lockedCredits: 0,
+      username: userData.username,
+      email: userData.email,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      eco_credits: 0,
+      locked_credits: 0,
       codingHours: 0,
       activitiesCount: 0,
       rank: mockData.users.length + 1,
       badge: "Nature Newbie",
-      joinedDate: new Date().toISOString().split('T')[0],
-      avatar: `${userData.firstName[0]}${userData.lastName[0]}`
+      joinedDate: new Date().toISOString(),
+      profile_pic: null,
+      github_username: null,
+      github_token: null,
+      current_streak: 0,
+      longest_streak: 0
     };
     
     // Add to mock data (in real app, this would be saved to database)

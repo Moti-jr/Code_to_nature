@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import {
   Sidebar,
@@ -179,6 +179,7 @@ export function AppSidebar() {
           </div>
         ) : (
           <div className="space-y-1">
+            <Link to="/profile">
             <Button
               variant="ghost"
               size="sm"
@@ -187,6 +188,7 @@ export function AppSidebar() {
               <User className="w-4 h-4 mr-2" />
               Profile
             </Button>
+            </Link>
             <Button
               variant="ghost"
               size="sm" 
