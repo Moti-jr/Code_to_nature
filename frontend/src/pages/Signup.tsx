@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Separator } from "../components/ui/separator";
@@ -16,7 +22,7 @@ const Signup = () => {
     username: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -26,12 +32,12 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
       toast({
         title: "Password mismatch",
         description: "Passwords do not match. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -40,7 +46,7 @@ const Signup = () => {
       toast({
         title: "Password too short",
         description: "Password must be at least 6 characters long.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -50,7 +56,7 @@ const Signup = () => {
       lastName: formData.lastName,
       username: formData.username,
       email: formData.email,
-      password: formData.password
+      password: formData.password,
     });
 
     if (success) {
@@ -58,12 +64,13 @@ const Signup = () => {
         title: "Welcome to Code-to-Nature!",
         description: "Your account has been created successfully.",
       });
-      navigate("/");
+      navigate("/dashboard");
     } else {
       toast({
         title: "Signup failed",
-        description: "Email or username already exists. Please try different credentials.",
-        variant: "destructive"
+        description:
+          "Email or username already exists. Please try different credentials.",
+        variant: "destructive",
       });
     }
   };
@@ -73,12 +80,12 @@ const Signup = () => {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-primary to-success rounded-2xl flex items-center justify-center">
-              <Leaf className="w-8 h-8 text-white" />
+          <div className="flex justify-center mb-2">
+            <div className="flex justify-center mb-1">
+              <Leaf className="h-8 w-8 text-green-600" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-success bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold text-green-800 mb-2 text-balance">
             Code-to-Nature
           </h1>
           <p className="text-muted-foreground mt-2">
@@ -95,8 +102,8 @@ const Signup = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
+              {/*<div className="grid grid-cols-2 gap-4">
+                 <div className="space-y-2">
                   <Label htmlFor="firstName">First Name</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -121,7 +128,7 @@ const Signup = () => {
                     required
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div className="space-y-2">
                 <Label htmlFor="username">Username</Label>
@@ -132,7 +139,9 @@ const Signup = () => {
                     placeholder="johndoe"
                     className="pl-10"
                     value={formData.username}
-                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, username: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -148,7 +157,9 @@ const Signup = () => {
                     placeholder="john@example.com"
                     className="pl-10"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -164,7 +175,9 @@ const Signup = () => {
                     placeholder="••••••••"
                     className="pl-10 pr-10"
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
                     required
                   />
                   <Button
@@ -193,7 +206,12 @@ const Signup = () => {
                     placeholder="••••••••"
                     className="pl-10 pr-10"
                     value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        confirmPassword: e.target.value,
+                      })
+                    }
                     required
                   />
                   <Button
@@ -212,7 +230,12 @@ const Signup = () => {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full" size="lg" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full"
+                size="lg"
+                disabled={loading}
+              >
                 {loading ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
@@ -226,7 +249,10 @@ const Signup = () => {
               <Separator className="my-4" />
               <div className="text-center text-sm text-muted-foreground">
                 Already have an account?{" "}
-                <Link to="/login" className="text-primary font-medium hover:underline">
+                <Link
+                  to="/login"
+                  className="text-primary font-medium hover:underline"
+                >
                   Sign in
                 </Link>
               </div>

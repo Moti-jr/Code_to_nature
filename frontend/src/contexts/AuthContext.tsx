@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useEffect} from 'react';
-import type { ReactNode } from 'react';
-import mockData from '../data/mockUsers.json';
+import { createContext, useContext, useState, useEffect } from "react";
+import type { ReactNode } from "react";
+import mockData from "../data/mockUsers.json";
 
 interface User {
   id: string;
@@ -8,7 +8,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
-  eco_credits: number;
+  eco_credits: number | 0;
   locked_credits: number;
   codingHours: number;
   activitiesCount: number;
@@ -16,8 +16,8 @@ interface User {
   badge: string;
   joinedDate: string;
   profile_pic: string | null;
-  github_username: string;
-  github_token: string;
+  github_username: string | null;
+  github_token: string | null;
   current_streak: number;
   longest_streak: number;
 }
@@ -44,7 +44,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Check for existing session on app load
   useEffect(() => {
-    const savedUser = localStorage.getItem('code-to-nature-user');
+    const savedUser = localStorage.getItem("code-to-nature-user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
@@ -64,42 +64,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setLoading(true);
-    
+
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const foundUser = mockData.users.find(
-      u => u.email === email && u.password === password
+      (u) => u.email === email && u.password === password
     );
-    
+
     if (foundUser) {
       const { password: _, ...userWithoutPassword } = foundUser;
       setUser(userWithoutPassword);
-      localStorage.setItem('code-to-nature-user', JSON.stringify(userWithoutPassword));
+      localStorage.setItem(
+        "code-to-nature-user",
+        JSON.stringify(userWithoutPassword)
+      );
       setLoading(false);
       return true;
     }
-    
+
     setLoading(false);
     return false;
   };
 
   const signup = async (userData: SignupData): Promise<boolean> => {
     setLoading(true);
-    
+
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     // Check if user already exists
     const existingUser = mockData.users.find(
-      u => u.email === userData.email || u.username === userData.username
+      (u) => u.email === userData.email || u.username === userData.username
     );
-    
+
     if (existingUser) {
       setLoading(false);
       return false;
     }
-    
+
     // Create new user with structure matching mock data
     const newUser: User = {
       id: Date.now().toString(),
@@ -114,27 +117,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       rank: mockData.users.length + 1,
       badge: "Nature Newbie",
       joinedDate: new Date().toISOString(),
-      profile_pic: null,
+      profile_pic: null as string | null,
       github_username: null,
       github_token: null,
       current_streak: 0,
-      longest_streak: 0
+      longest_streak: 0,
     };
-    
+
     // Add to mock data (in real app, this would be saved to database)
-    mockData.users.push({...newUser, password: userData.password});
-    
+    // mockData.users.push({...newUser, password: userData.password});
+    mockData.users.push({
+      ...newUser,
+      password: userData.password,
+      profile_pic: newUser.profile_pic ?? null, // enforce correct type
+    } as any);
+
     // Set user (without password)
     setUser(newUser);
-    localStorage.setItem('code-to-nature-user', JSON.stringify(newUser));
-    
+    localStorage.setItem("code-to-nature-user", JSON.stringify(newUser));
+
     setLoading(false);
     return true;
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('code-to-nature-user');
+    localStorage.removeItem("code-to-nature-user");
   };
 
   const value = {
@@ -143,12 +151,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signup,
     logout,
     isAuthenticated: !!user,
-    loading
+    loading,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

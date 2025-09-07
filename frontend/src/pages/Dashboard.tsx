@@ -47,14 +47,14 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <EcoCard
             title="Total Eco-Credits"
-            value={user.ecoCredits}
+            value={user.eco_credits}
             subtitle="+23 this week"
             icon={<Leaf className="w-5 h-5" />}
             trend="up"
           />
           <EcoCard
             title="Locked Credits"
-            value={user.lockedCredits}
+            value={user.locked_credits}
             subtitle="Awaiting verification"
             icon={<Clock className="w-5 h-5" />}
             trend="neutral"

@@ -7,7 +7,7 @@
       "password": "password123",
       "firstName": "John",
       "lastName": "Doe",
-       "eco_credits": 247,
+      "eco_credits": 247,
       "locked_credits": 156,
       "codingHours": 42.5,
       "activitiesCount": 12,

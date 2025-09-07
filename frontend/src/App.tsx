@@ -16,6 +16,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import ProfilePage from "./pages/UserProfile";
+import HomePage from "./components/Overview";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             {/* Public Routes */}
+            <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             
@@ -48,7 +50,7 @@ const App = () => (
                     
                     <main className="flex-1 pt-12">
                       <Routes>
-                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/coding" element={<CodingSessions />} />
                         <Route path="/activities" element={<OutdoorActivities />} />
                         <Route path="/rewards" element={<RewardsStore />} />
