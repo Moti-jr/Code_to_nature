@@ -6,6 +6,47 @@ from apps.users.models import Profile
 
 # Create your views here.
 
+def format_user_data(profile, rank=None, include_user_id=False):
+    """
+    Helper function to format user profile data consistently across endpoints.
+    
+    Args:
+        profile: Profile instance
+        rank: User's rank in the leaderboard (optional)
+        include_user_id: Whether to include user_id in the response
+    
+    Returns:
+        Dictionary with formatted user data
+    """
+    user_data = {
+        'username': profile.user.username,
+        'eco_credits': profile.eco_credits,
+        'current_streak': profile.current_streak,
+        'longest_streak': profile.longest_streak,
+        'github_username': profile.github_username if profile.github_username else None
+    }
+    
+    if rank is not None:
+        user_data['rank'] = rank
+    
+    if include_user_id:
+        user_data['user_id'] = profile.user.id
+    
+    return user_data
+
+
+def get_user_rank(profile):
+    """
+    Helper function to calculate a user's rank based on eco_credits.
+    
+    Args:
+        profile: Profile instance
+    
+    Returns:
+        Integer representing the user's rank
+    """
+    return Profile.objects.filter(eco_credits__gt=profile.eco_credits).count() + 1
+
 @require_http_methods(["GET"])
 def top_eco_credits(request):
     """
@@ -18,17 +59,11 @@ def top_eco_credits(request):
         # Query top 10 profiles ordered by eco_credits in descending order
         top_profiles = Profile.objects.select_related('user').order_by('-eco_credits')[:10]
         
-        # Build the response data
-        leaderboard_data = []
-        for rank, profile in enumerate(top_profiles, 1):
-            leaderboard_data.append({
-                'rank': rank,
-                'username': profile.user.username,
-                'eco_credits': profile.eco_credits,
-                'current_streak': profile.current_streak,
-                'longest_streak': profile.longest_streak,
-                'github_username': profile.github_username if profile.github_username else None
-            })
+        # Build the response data using helper function
+        leaderboard_data = [
+            format_user_data(profile, rank=rank)
+            for rank, profile in enumerate(top_profiles, 1)
+        ]
         
         return JsonResponse({
             'success': True,
@@ -62,54 +97,35 @@ def leaderboard_with_friends(request):
         # Get top users
         top_profiles = Profile.objects.select_related('user').order_by('-eco_credits')[:limit]
         
-        leaderboard_data = []
+        # Build leaderboard data using helper function
+        leaderboard_data = [
+            format_user_data(profile, rank=rank, include_user_id=True)
+            for rank, profile in enumerate(top_profiles, 1)
+        ]
+        
         user_position = None
         friends_positions = []
         
-        for rank, profile in enumerate(top_profiles, 1):
-            user_data = {
-                'rank': rank,
-                'user_id': profile.user.id,
-                'username': profile.user.username,
-                'eco_credits': profile.eco_credits,
-                'current_streak': profile.current_streak,
-                'longest_streak': profile.longest_streak,
-                'github_username': profile.github_username if profile.github_username else None
-            }
-            leaderboard_data.append(user_data)
-            
-            # Track user's position if user_id is provided
-            if user_id and str(profile.user.id) == user_id:
-                user_position = user_data
+        # Check if user is in top list
+        if user_id:
+            for user_data in leaderboard_data:
+                if str(user_data['user_id']) == user_id:
+                    user_position = user_data
+                    break
         
         # If user_id is provided but user not in top list, find their actual position
         if user_id and not user_position:
             try:
                 user_profile = Profile.objects.select_related('user').get(user_id=user_id)
-                user_rank = Profile.objects.filter(eco_credits__gt=user_profile.eco_credits).count() + 1
-                user_position = {
-                    'rank': user_rank,
-                    'user_id': user_profile.user.id,
-                    'username': user_profile.user.username,
-                    'eco_credits': user_profile.eco_credits,
-                    'current_streak': user_profile.current_streak,
-                    'longest_streak': user_profile.longest_streak,
-                    'github_username': user_profile.github_username if user_profile.github_username else None
-                }
+                user_rank = get_user_rank(user_profile)
+                user_position = format_user_data(user_profile, rank=user_rank, include_user_id=True)
                 
-                # Get friends' positions
+                # Get friends' positions using helper functions
                 friends = user_profile.friends.select_related('user').order_by('-eco_credits')
-                for friend in friends:
-                    friend_rank = Profile.objects.filter(eco_credits__gt=friend.eco_credits).count() + 1
-                    friends_positions.append({
-                        'rank': friend_rank,
-                        'user_id': friend.user.id,
-                        'username': friend.user.username,
-                        'eco_credits': friend.eco_credits,
-                        'current_streak': friend.current_streak,
-                        'longest_streak': friend.longest_streak,
-                        'github_username': friend.github_username if friend.github_username else None
-                    })
+                friends_positions = [
+                    format_user_data(friend, rank=get_user_rank(friend), include_user_id=True)
+                    for friend in friends
+                ]
                     
             except Profile.DoesNotExist:
                 pass
