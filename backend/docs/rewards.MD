@@ -75,7 +75,6 @@ INSTALLED_APPS = [
 - **Secure redemption system** with credit validation
 - **User statistics** and redemption history
 - **Filtering and categorization** of rewards
-- **Automated email notifications** on redemption
 - **Milestone tracking** through signals
 - **Admin interface** with enhanced features
 - **Atomic transactions** for data integrity
