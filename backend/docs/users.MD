@@ -2,7 +2,7 @@
 
 ## API Docs Tested With PostMan
 ***Signup user***
-POST https://localhost/api/users/
+POST http://localhost:8000/api/users/
 body
 {
   "email": "johndoe@example.com",
@@ -19,7 +19,7 @@ response
 }
 
 ***Login user***
-POST https://localhost/api/token/
+POST http://localhost:8000/api/token/
 body
 {
   "email": "johndoe@example.com",
@@ -37,14 +37,14 @@ Note: Access token is required for all authenticated endpoints
 
 ***Get User(s)***
 Make sure that access token is set in headers
-GET https://localhost/api/users/ (admin route only)
-GET https://localhost/api/users/{id}/
+GET http://localhost:8000/api/users/ (admin route only)
+GET http://localhost:8000/api/users/{id}/
 
 ***User Profile***
 User Profile is created when user is first created
 Make sure that access token is set in headers
-GET https://localhost/api/profiles/ (admin route only)
-GET https://localhost/api/profiles/{id}/
+GET http://localhost:8000/api/profiles/ (admin route only)
+GET http://localhost:8000/api/profiles/{id}/
 
 response
 {
@@ -64,7 +64,7 @@ response
 
 ***Edit Profile***
 All fields
-PUT https://localhost/api/profiles/{id}/
+PUT http://localhost:8000/api/profiles/{id}/
 body
 {
   "profile_pic": null,
@@ -94,7 +94,7 @@ response
 }
 
 edit select fields
-PATCH https://localhost/api/profiles/{id}/
+PATCH http://localhost:8000/api/profiles/{id}/
 body
 {
   "github_username": "updatedgithub"
