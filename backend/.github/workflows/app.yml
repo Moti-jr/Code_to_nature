@@ -6,13 +6,6 @@ on:
   pull_request:
     branches: [ "Dev-Playground" ]
 
-env:
-  SECRET_KEY: ${{ secrets.SECRET_KEY }}
-  REDIS_URL: ${{ secrets.REDIS_URL }}
-
-
-
-
 jobs:
    deploy:
     runs-on: ubuntu-latest
@@ -26,6 +19,14 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
+
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
