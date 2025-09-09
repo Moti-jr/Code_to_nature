@@ -1,0 +1,44 @@
+name: CD of Code_To_Nature
+
+on:
+  push:
+    branches: [ "Dev-Playground" ]
+  pull_request:
+    branches: [ "Dev-Playground" ]
+
+env:
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  REDIS_URL: ${{ secrets.REDIS_URL }}
+
+
+
+
+jobs:
+   deploy:
+    runs-on: ubuntu-latest
+
+    environment: develop
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run database migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python manage.py migrate
+      
+      - name: Trigger Render deploy
+        run: |
+          curl "${{ secrets.DEPLOY_HOOK }}"
+        
