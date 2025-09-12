@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import transaction
 from .models import Activity  
+from apps.coding.models import CodingSession
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ ACTIVITY_POINTS = {
     "family_meetup": 5,
     "hiking": 12,
     "walking": 8,
-    "running": 15,
+    "running": 200,
     "cycling": 20,
     "climbing": 25,
     "camping": 10,
@@ -25,6 +26,8 @@ ACTIVITY_POINTS = {
 def unlock_credits_signal(sender, instance, created, **kwargs):
     """
     Unlock eco-credits for a user when an activity is verified.
+    Also uses unlocked points to progressively unlock CodingSessions (FIFO).
+    Leftover points are stored for future unlocking.
     """
     activity = instance
 
@@ -54,12 +57,44 @@ def unlock_credits_signal(sender, instance, created, **kwargs):
                 if points_to_unlock > 0:
                     user_profile.locked_credits -= points_to_unlock
                     user_profile.eco_credits += points_to_unlock
-                    user_profile.save()
+
+                    # Also add to points_to_unlock pool
+                    user_profile.points_to_unlock += points_to_unlock
+
+                    user_profile.save(
+                        update_fields=["locked_credits", "eco_credits", "points_to_unlock"]
+                    )
+
 
                     logger.info(
-                        f"Unlocked {points_to_unlock} eco-credits for {user_profile.user.username} "
+                        f"Unlocked {points_to_unlock:.2f} eco-credits for {user_profile.user.username} "
                         f"({activity.activity}, {duration_in_hrs:.2f} hrs)"
                     )
+                    
+                    # Now unlock CodingSessions in FIFO order
+                    # Use available points to unlock coding sessions FIFO
+                    locked_sessions = CodingSession.objects.filter(
+                        user=user_profile, status="locked"
+                    ).order_by("created_at")
+
+                    for session in locked_sessions:
+                        if user_profile.points_to_unlock <= 0:
+                            break
+
+                        cost = session.credits_awarded
+                        if user_profile.points_to_unlock >= cost:
+                            session.unlock()
+                            user_profile.points_to_unlock -= cost
+                            logger.info(
+                                f"Unlocked CodingSession {session.session_name} for {user_profile.user.username} "
+                                f"using {cost} points."
+                            )
+                        else:
+                            break  # not enough points left to unlock next session
+
+                    # Save updated remaining points
+                    user_profile.save(update_fields=["points_to_unlock"])
+
         except Exception as e:
             logger.error(f"Error unlocking credits: {str(e)}")
 
