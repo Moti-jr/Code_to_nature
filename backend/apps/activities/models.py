@@ -3,9 +3,9 @@ from apps.users.models import CustomUser
 from datetime import date, time
 from auditlog.registry import auditlog
 # Create your models here.
+
+
 class Activity(models.Model):
-
-
     user = models.ForeignKey(CustomUser, null=False, on_delete=models.CASCADE)
     duration = models.TimeField(null=False, default=time(0, 0))
     verification_proof = models.ImageField(upload_to='activities/', null=False)

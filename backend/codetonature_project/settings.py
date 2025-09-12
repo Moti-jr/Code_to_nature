@@ -3,6 +3,9 @@ from datetime import timedelta
 import os
 import dj_database_url
 from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 import logging
 
 load_dotenv()
@@ -43,7 +46,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage', # placement is important
     'django.contrib.staticfiles',
+    'cloudinary',
     'django_extensions',
     'auditlog',
     'corsheaders',
@@ -53,7 +58,8 @@ INSTALLED_APPS = [
     'apps.activities',
     'apps.rewards',
     'apps.leaderboard',
-    'apps.common'
+    'apps.common',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -99,8 +105,16 @@ DATABASES = {
         conn_max_age=600
     )
 }
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv("CLOUD_NAME"),
+    'API_KEY': os.getenv("API_KEY"),
+    'API_SECRET': os.getenv("API_SECRET"),
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# MEDIA_URL = "/media/"
+# MEDIA_ROOT = BASE_DIR / "media"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -151,8 +165,10 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
 }
 
 GITHUB_TASK_SECRET = os.environ.get("GITHUB_TASK_SECRET")

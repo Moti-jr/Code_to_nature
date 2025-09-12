@@ -33,4 +33,4 @@ urlpatterns = [
     path('api/leaderboard/', include('apps.leaderboard.urls')),
     path('api/rewards/', include('apps.rewards.urls'))
 ]
-urlpatterns+=static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+# urlpatterns+=static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

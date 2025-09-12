@@ -43,6 +43,7 @@ interface Activity {
 const OutdoorActivities = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const token = localStorage.getItem("authToken");
 
   const [formData, setFormData] = useState<{
     activity: string;
@@ -68,21 +69,21 @@ const OutdoorActivities = () => {
     fetchActivities();
   }, []);
 
-  const API_BASE_URL =
-  import.meta.env.VITE_API_URL 
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   const fetchActivities = async () => {
     try {
-      const token = localStorage.getItem("authToken");
       const response = await fetch(
         `${API_BASE_URL}/activities/`,
         {
+          method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       if (response.ok) {
         const data = await response.json();
+        // console.log("data: ", data)
         const allActivities = data.data || data;
         setActivities(allActivities);
       }
@@ -128,7 +129,12 @@ const OutdoorActivities = () => {
           "verification_proof",
           formData.verification_proof
         );
+        // console.log("FormData: ", formDataToSend)
       }
+
+      {/*for (let pair of formDataToSend.entries()) {
+         console.log(pair[0], pair[1]);
+      }*/}
 
       const response = await fetch(
         `${API_BASE_URL}/activities/`,
@@ -138,6 +144,7 @@ const OutdoorActivities = () => {
           body: formDataToSend,
         }
       );
+      // console.log("Response for FormDatatoSend: ", response)
 
       if (response.ok) {
         const newActivity = await response.json();
@@ -175,6 +182,7 @@ const OutdoorActivities = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
+      // console.log("Selected file:", e.target.files[0]);
       setFormData({ ...formData, verification_proof: e.target.files[0] });
     }
   };
@@ -259,7 +267,6 @@ const OutdoorActivities = () => {
                     <SelectValue placeholder="Select an activity" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="family_meetup">Family Meetup</SelectItem>
                     <SelectItem value="hiking">Hiking</SelectItem>
                     <SelectItem value="walking">Walking</SelectItem>
                     <SelectItem value="running">Running</SelectItem>
@@ -334,7 +341,6 @@ const OutdoorActivities = () => {
                 <Label htmlFor="verification_proof">Verification Photo</Label>
                 <div
                   className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:bg-accent/10 transition-colors"
-                  onClick={triggerFileInput}
                 >
                   <Camera className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
                   <p className="text-sm text-muted-foreground mb-2">

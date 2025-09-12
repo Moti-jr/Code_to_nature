@@ -44,9 +44,14 @@ const CodingSessions = () => {
   const [sessions, setSessions] = useState<CodingSession[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingSessions, setIsLoadingSessions] = useState(true);
+  const token = localStorage.getItem("authToken");
+
+  const userId = user ? user.user : ""
+
+  // console.log("UserId: ", userId)
 
   const [formData, setFormData] = useState({
-    sessionName: "",
+    user: userId,
     type: "",
     hours: "",
   });
@@ -57,7 +62,6 @@ const CodingSessions = () => {
 
   // Fetch sessions from backend
   const fetchSessions = async () => {
-    const token = localStorage.getItem("authToken");
     if (!user) return;
 
     try {
@@ -77,7 +81,7 @@ const CodingSessions = () => {
       const result: ApiResponse<CodingSession[]> = await response.json();
       setSessions(result.data || []);
     } catch (error) {
-      console.error("Error fetching sessions:", error);
+      // console.error("Error fetching sessions:", error);
       toast({
         title: "Error",
         description: "Failed to load coding sessions. Please try again.",
@@ -115,9 +119,10 @@ const CodingSessions = () => {
 
       const sessionData = {
         duration: duration,
-        session_name: formData.sessionName,
+        user: userId,
         source: formData.type,
       };
+      //console.log("sessionData: ", sessionData)
 
       const response = await fetch(`${API_BASE_URL}/codingsessions/`, {
         method: "POST",
@@ -134,12 +139,12 @@ const CodingSessions = () => {
 
       toast({
         title: "Success!",
-        description: `${formData.sessionName} logged for ${formData.type} session `,
+        description: `logged for ${formData.type} session `,
       });
 
       // Reset form
       setFormData({
-        sessionName: "",
+        user: String(userId),
         type: "",
         hours: "",
       });
@@ -147,7 +152,7 @@ const CodingSessions = () => {
       // Refresh sessions list
       await fetchSessions();
     } catch (error) {
-      console.error("Error submitting session:", error);
+      // console.error("Error submitting session:", error);
       toast({
         title: "Error",
         description: "Failed to log coding session. Please try again.",
@@ -205,18 +210,6 @@ const CodingSessions = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="sessionName">Session Name</Label>
-                <Input
-                  id="sessionName"
-                  placeholder="e.g., React Dashboard, API Integration"
-                  value={formData.sessionName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, sessionName: e.target.value })
-                  }
-                  required
-                />
-              </div>
-              <div>
                 <Label htmlFor="type">Session Type</Label>
                 <Select
                   value={formData.type}
@@ -258,7 +251,7 @@ const CodingSessions = () => {
                 className="w-full"
                 size="lg"
                 disabled={
-                  isSubmitting || !formData.type || !formData.hours || !formData.sessionName
+                  isSubmitting || !formData.type || !formData.hours || !formData.user
                 }
               >
                 {isSubmitting ? (
