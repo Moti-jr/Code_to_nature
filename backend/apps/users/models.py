@@ -21,6 +21,8 @@ class Profile(models.Model):
     github_token = models.UUIDField(blank=True, null=True)
     eco_credits = models.IntegerField(default=0)
     locked_credits = models.IntegerField(default=0)
+    points_to_unlock = models.IntegerField(default=0) # used to unlock sessions
+
     # streak tracks activities (to encourage users to take breaks,
     # activities unlock credits)
     current_streak = models.IntegerField(default=0)
