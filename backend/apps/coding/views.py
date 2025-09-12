@@ -25,7 +25,20 @@ class CodingViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['user']
 
-    
+    def get_queryset(self):
+        """Limit sessions to the authenticated user's profile sessions."""
+        try:
+            profile = self.request.user.profile
+        except Profile.DoesNotExist:
+            return CodingSession.objects.none()
+        return CodingSession.objects.filter(user=profile)
+
+    def perform_create(self, serializer):
+        """Ensure the logged-in user's profile is set on creation."""
+        profile = self.request.user.profile
+        serializer.save(user=profile)
+
+
     @action(
         detail=False,
         methods=['post'],

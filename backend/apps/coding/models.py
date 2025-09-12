@@ -16,15 +16,27 @@ class CodingSession(models.Model):
         ('manual', 'Manual Entry'),
         ('github', 'GitHub'),
     ]
+
+    STATUS_CHOICES = [
+        ('locked', 'Locked'),
+        ('unlocked', 'Unlocked'),
+    ]
+
     user = models.ForeignKey(
         Profile,
         on_delete=models.CASCADE,
         related_name='coding_sessions'
     )
+    session_name = models.CharField(max_length=250, blank=True, null=True)
     duration = models.DurationField(default=timedelta())
     source = models.CharField(max_length=10, choices=SOURCE_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     credits_awarded = models.IntegerField(default=0)
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='locked'
+    )
 
     def get_duration_from_github(self):
         """get duration of coding session from github"""
@@ -120,12 +132,18 @@ class CodingSession(models.Model):
 
         super().save(*args, **kwargs)
 
+    def unlock(self):
+        """Unlock this session"""
+        self.status = 'unlocked'
+        self.save(update_fields=['status'])
+
     def __str__(self):
         """String representation of the CodingSession"""
         return (
             f"CodingSession(user={self.user},"
             f"duration={self.duration},"
             f"source={self.source},"
+            f"status={self.status}, "
             f"created_at={self.created_at})"
         )
 

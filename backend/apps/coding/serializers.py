@@ -8,11 +8,13 @@ class CodingSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CodingSession
         fields = [
-            'user',
+            'id',
+            'session_name',
             'duration',
             'source',
             'created_at',
-            'credits_awarded'
+            'credits_awarded',
+            'status',
         ]
 
     def create(self, validated_data):
