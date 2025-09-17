@@ -10,7 +10,6 @@ import {
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Separator } from "../components/ui/separator";
-import { Alert, AlertDescription } from "../components/ui/alert";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Leaf,
@@ -19,7 +18,6 @@ import {
   Eye,
   EyeOff,
   Loader2,
-  AlertCircle,
 } from "lucide-react";
 import { useToast } from "../hooks/use-toast";
 import { useAuth } from "../contexts/AuthContext";
@@ -44,7 +42,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const { toast } = useToast();
-  const { login, loading, error } = useAuth();
+  const { login, loading } = useAuth();
   const navigate = useNavigate();
 
   const validateForm = (): boolean => {
@@ -79,6 +77,12 @@ const Login = () => {
         description: "You've successfully logged in to Code-to-Nature",
       });
       navigate("/dashboard");
+    } else {
+      toast({
+        title: "Login failed",
+        description: "Invalid email or password. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -116,13 +120,6 @@ const Login = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* Error Alert */}
-            {error && (
-              <Alert variant="destructive" className="mb-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
