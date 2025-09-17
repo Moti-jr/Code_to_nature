@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "proxy": "https://code-to-nature.onrender.com",
+  "proxy": "https://code-to-nature.onrender.com/api",
   "private": true,
   "version": "0.0.0",
   "type": "module",
