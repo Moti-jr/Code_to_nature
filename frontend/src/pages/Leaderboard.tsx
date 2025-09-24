@@ -86,7 +86,10 @@ export default function LeaderboardPage() {
   };
 
   // Find the current user in the leaderboard
-const currentUserEntry = leaderboard.find((u) => u.user_id === user?.id) || null
+const currentUserEntry = leaderboard.find(
+  (u) => u.user_id === user?.user
+) || null;
+
 const currentUserRank = currentUserEntry?.rank ?? null
 
 const showUserSeparately = !!(user && currentUserRank && currentUserRank > 10)
